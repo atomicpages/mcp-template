@@ -3,28 +3,28 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 mkdirSync("dist", { recursive: true });
 
 function runBuild(args: string[]): void {
-  const proc = Bun.spawnSync(["bun", "build", ...args]);
+	const proc = Bun.spawnSync(["bun", "build", ...args]);
 
-  if (proc.exitCode !== 0) {
-    console.error(proc.stderr.toString());
-    process.exit(1);
-  }
+	if (proc.exitCode !== 0) {
+		console.error(proc.stderr.toString());
+		process.exit(1);
+	}
 }
 
 runBuild([
-  "./src/__SERVICE_KEBAB__-mcp.ts",
-  "--outfile=dist/__SERVICE_KEBAB__-mcp.js",
-  "--target=node",
-  "--format=esm",
-  "--packages=external",
+	"./src/__SERVICE_KEBAB__-mcp.ts",
+	"--outfile=dist/__SERVICE_KEBAB__-mcp.js",
+	"--target=node",
+	"--format=esm",
+	"--packages=external",
 ]);
 
 runBuild([
-  "./src/cli.ts",
-  "--outfile=dist/cli.js",
-  "--target=node",
-  "--format=esm",
-  "--packages=external",
+	"./src/cli.ts",
+	"--outfile=dist/cli.js",
+	"--target=node",
+	"--format=esm",
+	"--packages=external",
 ]);
 
 let cli = readFileSync("dist/cli.js", "utf8");
@@ -32,8 +32,8 @@ cli = cli.replace(/^#!.*\n/, "");
 writeFileSync("dist/cli.js", `#!/usr/bin/env node\n${cli}`);
 
 writeFileSync(
-  "dist/__SERVICE_KEBAB__-mcp.d.ts",
-  `import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+	"dist/__SERVICE_KEBAB__-mcp.d.ts",
+	`import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { HandleRequestOptions } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import type { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 
@@ -149,5 +149,5 @@ export function start__SERVICE_PASCAL__McpTransport(
 );
 
 console.error(
-  "Build finished: dist/__SERVICE_KEBAB__-mcp.js, dist/cli.js, dist/__SERVICE_KEBAB__-mcp.d.ts",
+	"Build finished: dist/__SERVICE_KEBAB__-mcp.js, dist/cli.js, dist/__SERVICE_KEBAB__-mcp.d.ts",
 );

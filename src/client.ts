@@ -14,50 +14,50 @@
 import ky, { type KyInstance } from "ky";
 
 export type ClientConfig = {
-  baseUrl?: string;
-  headers?: Record<string, string>;
-  throwOnError?: boolean;
+	baseUrl?: string;
+	headers?: Record<string, string>;
+	throwOnError?: boolean;
 };
 
 export type RequestInterceptor = (
-  request: Request,
-  options: { headers?: Headers },
+	request: Request,
+	options: { headers?: Headers },
 ) => Promise<Request> | Request;
 
 type ClientShape = {
-  instance: KyInstance;
-  config: ClientConfig;
-  setConfig: (config: ClientConfig) => void;
-  interceptors: {
-    request: {
-      use: (interceptor: RequestInterceptor) => void;
-    };
-  };
+	instance: KyInstance;
+	config: ClientConfig;
+	setConfig: (config: ClientConfig) => void;
+	interceptors: {
+		request: {
+			use: (interceptor: RequestInterceptor) => void;
+		};
+	};
 };
 
 const interceptors: RequestInterceptor[] = [];
 
 export const client: ClientShape = {
-  instance: ky.create({}),
-  config: {},
-  setConfig(config) {
-    this.config = { ...this.config, ...config };
-    this.instance = ky.create({
-      prefixUrl: config.baseUrl ?? this.config.baseUrl,
-      headers: config.headers ?? this.config.headers,
-      throwHttpErrors: config.throwOnError ?? this.config.throwOnError ?? true,
-    });
-  },
-  interceptors: {
-    request: {
-      use(interceptor) {
-        interceptors.push(interceptor);
-      },
-    },
-  },
+	instance: ky.create({}),
+	config: {},
+	setConfig(config) {
+		this.config = { ...this.config, ...config };
+		this.instance = ky.create({
+			prefixUrl: config.baseUrl ?? this.config.baseUrl,
+			headers: config.headers ?? this.config.headers,
+			throwHttpErrors: config.throwOnError ?? this.config.throwOnError ?? true,
+		});
+	},
+	interceptors: {
+		request: {
+			use(interceptor) {
+				interceptors.push(interceptor);
+			},
+		},
+	},
 };
 
 /** Test-only: visible to the request-context module so its interceptor wiring is exercised. */
 export function getRegisteredRequestInterceptors(): RequestInterceptor[] {
-  return interceptors;
+	return interceptors;
 }
