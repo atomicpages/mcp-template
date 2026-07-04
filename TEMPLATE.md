@@ -1,18 +1,31 @@
 # MCP server template
 
 Self-contained scaffold for a TypeScript MCP server that wraps a REST API.
-Mirrors the architecture of [ashby-mcp](../README.md): stdio + streamable HTTP
-transports, multi-tenant credentials via `AsyncLocalStorage`, atomic + workflow
-tool registrars, env-gated debug logging.
+Mirrors the architecture of ashby-mcp: stdio + streamable HTTP transports,
+multi-tenant credentials via `AsyncLocalStorage`, atomic + workflow tool
+registrars, env-gated debug logging.
 
 This is the **starting point** for a new agent. Run the rename, swap in a real
 SDK, replace the two example tools, and you have a working server.
 
+## Agent orientation
+
+This template is the concrete implementation of the patterns described in the
+[atomicpages/mcp-skills](https://github.com/atomicpages/mcp-skills) repo. If you
+arrived here from a skill, you're in the right place. Run `setup.ts`, then use
+the skills for implementation guidance.
+
+If you don't have the skills loaded yet:
+
+```bash
+npx skills add atomicpages/mcp-skills
+```
+
 ## Quick start
 
 ```bash
-cp -r template ../my-service-mcp
-cd ../my-service-mcp
+gh repo create --template atomicpages/mcp-template --clone my-service-mcp
+cd my-service-mcp
 bun setup.ts \
   --kebab my-service \
   --pascal MyService \
@@ -89,7 +102,7 @@ flowchart TD
 1. **Plug in a real SDK.** The template ships `src/client.ts` as a stub. Two
    options:
    - **OpenAPI codegen (recommended).** Add the generator as a dev dep and a
-     config — see the Ashby project's [openapi-ts.config.ts](../openapi-ts.config.ts):
+     config — example:
 
      ```bash
      bun add -d @hey-api/openapi-ts
@@ -158,7 +171,7 @@ flowchart TD
 
 ### Cloudflare Workers / edge runtime
 
-Follow the ashby pattern in [src/worker.ts](../src/worker.ts): minimal
+Follow this pattern for a `src/worker.ts` entry: minimal
 module-level code (install interceptor, set empty base config), then
 **dynamic-import** the library inside `fetch` so generated Zod schemas don't
 blow past the startup CPU budget. Create a fresh `McpServer` + stateless
@@ -166,10 +179,9 @@ transport per request — `Protocol.connect()` is one-shot.
 
 ### Direct CLI (non-MCP)
 
-A shell-friendly binary that runs the same tool logic without an LLM. See the
-plan at
-[.cursor/plans/direct_cli_for_ashby_66d8dc3c.plan.md](../.cursor/plans/direct_cli_for_ashby_66d8dc3c.plan.md)
-— the same "tool registry as side-effect" pattern ports directly.
+A shell-friendly binary that runs the same tool logic without an LLM. The
+"tool registry as side-effect" pattern ports directly — register tools
+normally, then call them from a CLI dispatcher instead of an MCP transport.
 
 ### Docker multi-tenant deployment
 
@@ -201,11 +213,11 @@ After `setup.ts` and `bun install`:
 
 ## Related skills
 
-- [`.claude/skills/mcp-builder`](../.claude/skills/mcp-builder/SKILL.md) — tool
-  design patterns.
-- [`.claude/skills/mcp-workflow-design`](../.claude/skills/mcp-workflow-design/SKILL.md) —
-  composite workflow design.
-- [`.agents/skills/mcp-openapi-typescript-stack`](../.agents/skills/mcp-openapi-typescript-stack/SKILL.md) —
+- [mcp-openapi-typescript-stack](https://github.com/atomicpages/mcp-skills/blob/main/skills/mcp-openapi-typescript-stack/SKILL.md) —
   the abstract pattern this template concretizes. Read this before making
   non-trivial architectural changes to `<service>-mcp.ts` or
   `<service>-request-context.ts`.
+- [mcp-workflow-design](https://github.com/atomicpages/mcp-skills/blob/main/skills/mcp-workflow-design/SKILL.md) —
+  composite workflow design.
+- [mcp-builder](https://github.com/atomicpages/mcp-skills/blob/main/.agents/skills/mcp-builder/SKILL.md) —
+  tool design patterns.

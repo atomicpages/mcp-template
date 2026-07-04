@@ -1,3 +1,5 @@
+> **Template mode:** If you haven't run `setup.ts` yet, see [TEMPLATE.md](TEMPLATE.md) for scaffolding instructions and companion skill links.
+
 # Agent guide — __SERVICE_KEBAB__-mcp
 
 ## What this is

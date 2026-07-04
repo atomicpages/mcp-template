@@ -50,6 +50,12 @@ const SKIP_DIRS = new Set([
 	"coverage",
 ]);
 
+// Files that should NOT be token-replaced (template's own docs, not project docs)
+const SKIP_FILES = new Set(["README.md"]);
+
+// File that becomes the project README after token replacement
+const PROJECT_README = "PROJECT_README.md";
+
 const BINARY_EXT = new Set([
 	".png",
 	".jpg",
@@ -233,7 +239,9 @@ async function main(): Promise<void> {
 		`[setup] kebab=${tokens.kebab}  pascal=${tokens.pascal}  upper=${tokens.upper}  title="${tokens.title}"  dryRun=${dryRun}`,
 	);
 
-	const files = walkFiles(root).filter((f) => f !== selfPath);
+	const files = walkFiles(root).filter(
+		(f) => f !== selfPath && !SKIP_FILES.has(relative(root, f)),
+	);
 
 	let contentChanges = 0;
 	for (const file of files) {
@@ -287,6 +295,21 @@ async function main(): Promise<void> {
 		} else {
 			renameSync(dir, target);
 		}
+	}
+
+	// Replace PROJECT_README.md → README.md (token-replaced)
+	const projectReadmePath = join(root, PROJECT_README);
+	try {
+		const projectReadmeContent = readFileSync(projectReadmePath, "utf8");
+		const replacedReadme = replaceTokens(projectReadmeContent, tokens);
+		if (!dryRun) {
+			writeFileSync(join(root, "README.md"), replacedReadme);
+			unlinkSync(projectReadmePath);
+		} else {
+			console.error("[readme] PROJECT_README.md -> README.md (token-replaced)");
+		}
+	} catch {
+		console.error("[setup] PROJECT_README.md not found — skipping README swap");
 	}
 
 	console.error(
