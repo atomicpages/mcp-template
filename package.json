@@ -32,13 +32,13 @@
 		"typecheck": "tsc --noEmit --incremental"
 	},
 	"dependencies": {
-		"@modelcontextprotocol/sdk": "1.29.0",
-		"envalid": "8.1.1",
-		"ky": "1.14.3",
-		"zod": "4.3.6"
+		"@modelcontextprotocol/sdk": "^1.29.0",
+		"envalid": "8.2.0",
+		"ky": "^2.0.2",
+		"zod": "4.4.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.12",
+		"@biomejs/biome": "2.5.2",
 		"@types/bun": "latest"
 	},
 	"peerDependencies": {
