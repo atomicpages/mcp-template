@@ -44,15 +44,15 @@ would change.
 
 ## Placeholder tokens
 
-| Token                  | Example        | Used in                                                                   |
-| ---------------------- | -------------- | ------------------------------------------------------------------------- |
-| `__SERVICE_KEBAB__`    | `my-service`   | File names, package name, CLI binary, symbol prefixes in a few helpers.  |
-| `__SERVICE_PASCAL__`   | `MyService`    | Type and function names: `configureMyServiceClient`, etc.                |
-| `__SERVICE_UPPER__`    | `MY_SERVICE`   | Env var prefix: `MY_SERVICE_API_KEY`, `MY_SERVICE_API_KEY_HEADER`, etc.  |
-| `__SERVICE_TITLE__`    | `My Service`   | Free-form display name in README and tool descriptions.                  |
+| Token                | Example      | Used in                                                                 |
+| -------------------- | ------------ | ----------------------------------------------------------------------- |
+| `__SERVICE_KEBAB__`  | `my-service` | File names, package name, CLI binary, symbol prefixes in a few helpers. |
+| `__SERVICE_PASCAL__` | `MyService`  | Type and function names: `configureMyServiceClient`, etc.               |
+| `__SERVICE_UPPER__`  | `MY_SERVICE` | Env var prefix: `MY_SERVICE_API_KEY`, `MY_SERVICE_API_KEY_HEADER`, etc. |
+| `__SERVICE_TITLE__`  | `My Service` | Free-form display name in README and tool descriptions.                 |
 
-All four appear in both file contents and file names. `setup.ts` handles
-both; if you prefer to do it manually:
+All four appear in both file contents and file names. `setup.ts` handles both;
+if you prefer to do it manually:
 
 ```bash
 # contents
@@ -131,6 +131,7 @@ flowchart TD
 
      Run `bunx openapi-ts`, delete `src/client.ts`, and update the import in
      `src/<service>-request-context.ts` to `./generated/client.gen.ts`.
+
    - **Hand-written client.** Flesh out `src/client.ts` with real methods, or
      replace it with `src/sdk/*.ts` modules. Any shape works as long as the
      `sdkFn`s you pass to `register*Tool` match what you import.
@@ -144,8 +145,8 @@ flowchart TD
 3. **Replace the example tool and workflow.**
    - `src/tools/example.ts` — one atomic wrapper with a stub SDK function. Swap
      for real domain modules (`src/tools/users.ts`, `src/tools/orders.ts`, …)
-     and call each new `register*Tools` function from
-     `register*Tools` in `src/<service>-mcp.ts`.
+     and call each new `register*Tools` function from `register*Tools` in
+     `src/<service>-mcp.ts`.
    - `src/tools/workflows/example-workflow.ts` — one composite tool. Use it as
      the shape reference for real workflows (name → id resolution, parallel
      fan-out, `summary` + `data` response).
@@ -160,10 +161,10 @@ flowchart TD
 - `src/<service>-request-context.ts` — ALS, per-request interceptor, strict
   tenant 401 wrapper. **The `options.headers` fix inside the interceptor is
   load-bearing for multi-tenant HTTP with `@hey-api/client-ky`; don't drop it.**
-- `src/tools/register.ts` — Zod → `inputSchema` extraction, BigInt
-  sanitization, error mapping. Only the `is*Error` helper typically changes.
-- `src/tools/workflows/helpers.ts` — `callApi`, `callApiAll`, response
-  builders. Again, only the envelope assumption usually changes.
+- `src/tools/register.ts` — Zod → `inputSchema` extraction, BigInt sanitization,
+  error mapping. Only the `is*Error` helper typically changes.
+- `src/tools/workflows/helpers.ts` — `callApi`, `callApiAll`, response builders.
+  Again, only the envelope assumption usually changes.
 - `scripts/build.ts` — dual-bundle + hand-rolled `.d.ts` tail. Update the
   declaration file if you add new public library exports.
 
@@ -171,24 +172,25 @@ flowchart TD
 
 ### Cloudflare Workers / edge runtime
 
-Follow this pattern for a `src/worker.ts` entry: minimal
-module-level code (install interceptor, set empty base config), then
-**dynamic-import** the library inside `fetch` so generated Zod schemas don't
-blow past the startup CPU budget. Create a fresh `McpServer` + stateless
-transport per request — `Protocol.connect()` is one-shot.
+Follow this pattern for a `src/worker.ts` entry: minimal module-level code
+(install interceptor, set empty base config), then **dynamic-import** the
+library inside `fetch` so generated Zod schemas don't blow past the startup CPU
+budget. Create a fresh `McpServer` + stateless transport per request —
+`Protocol.connect()` is one-shot.
 
 ### Direct CLI (non-MCP)
 
-A shell-friendly binary that runs the same tool logic without an LLM. The
-"tool registry as side-effect" pattern ports directly — register tools
-normally, then call them from a CLI dispatcher instead of an MCP transport.
+A shell-friendly binary that runs the same tool logic without an LLM. The "tool
+registry as side-effect" pattern ports directly — register tools normally, then
+call them from a CLI dispatcher instead of an MCP transport.
 
 ### Docker multi-tenant deployment
 
 Add a Dockerfile that runs `bun dist/cli.js --http --multi-tenant`. The image
 has no secrets; each request sends its own key in
-`X-__SERVICE_PASCAL__-Api-Key`. Enable `__SERVICE_UPPER___MCP_DEBUG_HTTP_AUTH=true`
-via `-e` when debugging gateway/proxy setups.
+`X-__SERVICE_PASCAL__-Api-Key`. Enable
+`__SERVICE_UPPER___MCP_DEBUG_HTTP_AUTH=true` via `-e` when debugging
+gateway/proxy setups.
 
 ## Verification checklist
 
@@ -204,20 +206,20 @@ After `setup.ts` and `bun install`:
       request without the configured API-key header:
 
       ```bash
-      curl -s -o /dev/null -w '%{http_code}\n' \
-        -X POST http://localhost:3000/ \
-        -H 'Content-Type: application/json' \
-        -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-      # → 401
-      ```
+              curl -s -o /dev/null -w '%{http_code}\n' \
+                -X POST http://localhost:3000/ \
+                -H 'Content-Type: application/json' \
+                -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+              # → 401
+              ```
 
 ## Related skills
 
-- [mcp-openapi-typescript-stack](https://github.com/atomicpages/mcp-skills/blob/main/skills/mcp-openapi-typescript-stack/SKILL.md) —
-  the abstract pattern this template concretizes. Read this before making
+- [mcp-openapi-typescript-stack](https://github.com/atomicpages/mcp-skills/blob/main/skills/mcp-openapi-typescript-stack/SKILL.md)
+  — the abstract pattern this template concretizes. Read this before making
   non-trivial architectural changes to `<service>-mcp.ts` or
   `<service>-request-context.ts`.
-- [mcp-workflow-design](https://github.com/atomicpages/mcp-skills/blob/main/skills/mcp-workflow-design/SKILL.md) —
-  composite workflow design.
-- [mcp-builder](https://github.com/atomicpages/mcp-skills/blob/main/.agents/skills/mcp-builder/SKILL.md) —
-  tool design patterns.
+- [mcp-workflow-design](https://github.com/atomicpages/mcp-skills/blob/main/skills/mcp-workflow-design/SKILL.md)
+  — composite workflow design.
+- [mcp-builder](https://github.com/atomicpages/mcp-skills/blob/main/.agents/skills/mcp-builder/SKILL.md)
+  — tool design patterns.

@@ -1,55 +1,56 @@
 {
-	"name": "__SERVICE_KEBAB__-mcp",
-	"version": "0.1.0",
-	"private": true,
-	"description": "MCP server for __SERVICE_TITLE__ — CLI (stdio / streamable HTTP) and programmatic API",
-	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/__SERVICE_KEBAB__-mcp.d.ts",
-			"import": "./dist/__SERVICE_KEBAB__-mcp.js",
-			"default": "./dist/__SERVICE_KEBAB__-mcp.js"
-		},
-		"./package.json": "./package.json"
-	},
-	"main": "./dist/__SERVICE_KEBAB__-mcp.js",
-	"types": "./dist/__SERVICE_KEBAB__-mcp.d.ts",
-	"bin": {
-		"__SERVICE_KEBAB__-mcp": "./dist/cli.js"
-	},
-	"files": [
-		"dist",
-		"README.md"
-	],
-	"scripts": {
-		"build": "bun scripts/build.ts",
-		"dev": "bun run --watch src/cli.ts --http",
-		"lint": "biome check . --diagnostic-level error",
-		"mcp": "bunx @modelcontextprotocol/inspector",
-		"jam": "bunx @mcpjam/inspector@latest",
-		"prepublishOnly": "bun run build",
-		"start": "bun src/index.ts",
-		"typecheck": "tsc --noEmit --incremental"
-	},
-	"dependencies": {
-		"@modelcontextprotocol/sdk": "^1.29.0",
-		"envalid": "8.2.0",
-		"ky": "^2.0.2",
-		"zod": "4.4.3"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.5.2",
-		"@types/bun": "latest"
-	},
-	"peerDependencies": {
-		"typescript": "^5"
-	},
-	"peerDependenciesMeta": {
-		"typescript": {
-			"optional": true
-		}
-	},
-	"engines": {
-		"node": ">=18"
-	}
+  "name": "__SERVICE_KEBAB__-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server for __SERVICE_TITLE__ — CLI (stdio / streamable HTTP) and programmatic API",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/__SERVICE_KEBAB__-mcp.d.ts",
+      "import": "./dist/__SERVICE_KEBAB__-mcp.js",
+      "default": "./dist/__SERVICE_KEBAB__-mcp.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/__SERVICE_KEBAB__-mcp.js",
+  "types": "./dist/__SERVICE_KEBAB__-mcp.d.ts",
+  "bin": {
+    "__SERVICE_KEBAB__-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bun scripts/build.ts",
+    "codegen": "bunx openapi-ts",
+    "dev": "bun run --watch src/cli.ts --http",
+    "jam": "bunx @mcpjam/inspector@latest",
+    "lint": "biome check . --diagnostic-level error",
+    "mcp": "bunx @modelcontextprotocol/inspector",
+    "prepublishOnly": "bun run build",
+    "start": "bun src/index.ts",
+    "test": "bun test --randomize",
+    "typecheck": "tsc --noEmit --incremental"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "envalid": "^8.2.0",
+    "ky": "^2.0.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.2",
+    "@hey-api/openapi-ts": "^0.99.0",
+    "@types/bun": "latest",
+    "@types/node": "^26.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  }
 }
