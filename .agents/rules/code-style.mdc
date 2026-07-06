@@ -1,0 +1,36 @@
+---
+globs: *.ts,*.js,*.tsx,*.jsx,*.mts,*.cjs,*.mjs,*.cts
+alwaysApply: false
+---
+
+Let code breathe — format for human scan, not minification.
+
+## Whitespace
+
+- Newline before `return` in multi-line functions
+- Newline before `if`, `for`, `while`, or `switch` unless it opens the function body
+- Blank line between logical sections
+
+## Structure
+
+- Match the file you're in: naming, imports, error shapes, abstractions
+- Small named helpers over long inline blocks
+- Reuse existing helpers before writing new ones
+- Shortest diff that fixes the root cause — grep callers, fix shared code once
+
+## Comments
+
+- JSDoc only when behavior isn't obvious from names and types
+- `biome-ignore` only with a one-line why
+- Intentional shortcuts: `ponytail:` comment naming the ceiling and upgrade path
+
+## TypeScript
+
+- Explicit types on exports and public boundaries; infer locals
+- `as const` for literal unions the SDK needs
+- `biome-ignore` + justification when `any` is unavoidable (generated SDK generics)
+
+## Tests
+
+- Non-trivial logic → one small `bun:test` file; no fixtures or extra frameworks
+- Skip tests for trivial one-liners
